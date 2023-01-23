@@ -61,7 +61,7 @@ def import_tags(file_path):
                         tag.save()
                     recipe.tags.add(tag)
 
-                print(str(index) + "/" + str(len(df)) + "       ", end='\r')
+                # print(str(index) + "/" + str(len(df)) + "       ", end='\r')
         except:
             print("Skipping")
 
