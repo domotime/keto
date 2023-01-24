@@ -1,8 +1,8 @@
 import os
 import openai
 
-openai.organization = "org-6oEWKOYBDy8lAtQVU7rLDb2m"
-openai.api_key = "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"
+openai.organization = "org-hap0lN10kL9bXjWOfqoYjjLj"
+openai.api_key = "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"
 openai.Model.list()
 
 from recipes.models.tag import Tag
@@ -30,14 +30,17 @@ for recipe in to_save['recipes']:
     done_recipes.append(recipe['id'])
 
 def random_recipes(tag_name):
-    global done_recipes
-    tag = Tag.objects.get(name=tag_name)
-    recipes = Recipe.objects.filter(tags=tag).exclude(pk__in=done_recipes)[:30]
-    return recipes
-    if recipes.count() >= 30:
-        return sample(recipes, 30)
-    else:
+    try:
+        global done_recipes
+        tag = Tag.objects.get(name=tag_name)
+        recipes = Recipe.objects.filter(tags=tag).exclude(pk__in=done_recipes).order_by('?')[:30]
         return recipes
+        if recipes.count() >= 30:
+            return sample(recipes, 30)
+        else:
+            return recipes
+    except:
+        print("Error in recipe: " + tag_name)
 
 from multiprocessing import Process
 import asyncio
@@ -48,6 +51,14 @@ def background(f):
 
     return wrapped
 
+import requests
+
+def save_image(image_url, image_name):
+    
+    img_data = requests.get(image_url).content
+    with open('json_recipes/images/' + image_name + '.jpg', 'wb') as handler:
+        handler.write(img_data)
+
 @background
 def create_recipe_json(recipe: Recipe):
     print("Creating recipe: " + recipe.name)
@@ -56,35 +67,60 @@ def create_recipe_json(recipe: Recipe):
             print("Already saved")
             return
         title = openai.Completion.create(engine="text-davinci-003", prompt=\
-            ("Traduci in italiano " + recipe.name), max_tokens=2000)
+            ("Traduci in italiano " + recipe.name), max_tokens=500)
+
+        ingredients = ""
+        for ingredient in recipe.ingredients.all():
+            ingredients = ingredients + ingredient.name + " "
         
         completion = openai.Completion.create(engine="text-davinci-003", prompt=\
-        ("Scrivi una ricetta in italiano di " + recipe.instructions), max_tokens=2000)
+        ("Scrivi una ricetta in italiano di " + recipe.instructions + " con prima una lista degli ingredienti"), max_tokens=3000)
         # Generating image
-        response = openai.Image.create(
-            prompt="tasty dish " + recipe.name + " for a recipe book without cutlery in the image", 
-            n=1,
-            size="1024x1024",
-        )
-        tags_to_return = []
-        for tag in recipe.tags.all():
-            tags_to_return.append(tag.name)
-        to_save['recipes'].append({
-            'name': title.choices[0].text,
-            'description': completion.choices[0].text,
-            'image': response["data"][0]["url"],
-            'tags': tags_to_return,
-            'id': recipe.pk
-        })
+        try:
+            response = openai.Image.create(
+                prompt="tasty dish " + recipe.name + " for a recipe book without cutlery in the image", 
+                n=1,
+                size="1024x1024",
+            )
+            tags_to_return = []
+            for tag in recipe.tags.all():
+                tags_to_return.append(tag.name)
+            to_save['recipes'].append({
+                'name': title.choices[0].text,
+                'description': completion.choices[0].text,
+                'image': response["data"][0]["url"],
+                'tags': tags_to_return,
+                'id': recipe.pk
+            })
+            save_image(response["data"][0]["url"], str(recipe.pk))
+        except:
+            tags_to_return = []
+            for tag in recipe.tags.all():
+                tags_to_return.append(tag.name)
+            to_save['recipes'].append({
+                'name': title.choices[0].text,
+                'description': completion.choices[0].text,
+                'image': "",               
+                'tags': tags_to_return,
+                'id': recipe.pk
+            })
         save_json()
-    except:
+    except Exception as e: 
+        print(e)
         print("Not saved")
 
 
-recipes = random_recipes("chicken")
+# recipes = random_recipes("poultry") | random_recipes("chicken") | random_recipes("seafood") | random_recipes("beef") | random_recipes("pork") | random_recipes("salmon") | random_recipes("shrimp") | random_recipes("eggs") | random_recipes("fish") | random_recipes("onions") | random_recipes("tomatoes") | random_recipes("carrots") | random_recipes("mushrooms") | random_recipes("zucchini") | random_recipes("spinach") | random_recipes("bacon") | random_recipes("cheese") | random_recipes("potatoes") | random_recipes("nuts") | random_recipes("avocado")
 
-for i in range(30):
-    create_recipe_json(recipes[i])
+recipes = random_recipes("pork")
+
+import time
+
+for index in range(3):
+    for i in range(10):
+        create_recipe_json(recipes[i])
+
+    time.sleep(60)
 exit()
 
 
