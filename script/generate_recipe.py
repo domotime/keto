@@ -2,7 +2,7 @@ import os
 import openai
 
 openai.organization = "org-hap0lN10kL9bXjWOfqoYjjLj"
-openai.api_key = "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"
+openai.api_key = "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"
 openai.Model.list()
 
 from recipes.models.tag import Tag
