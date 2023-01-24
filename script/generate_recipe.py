@@ -2,7 +2,7 @@ import os
 import openai
 
 openai.organization = "org-hap0lN10kL9bXjWOfqoYjjLj"
-openai.api_key = "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"
+openai.api_key = "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"
 openai.Model.list()
 
 from recipes.models.tag import Tag
@@ -110,18 +110,27 @@ def create_recipe_json(recipe: Recipe):
         print("Not saved")
 
 
-# recipes = random_recipes("poultry") | random_recipes("chicken") | random_recipes("seafood") | random_recipes("beef") | random_recipes("pork") | random_recipes("salmon") | random_recipes("shrimp") | random_recipes("eggs") | random_recipes("fish") | random_recipes("onions") | random_recipes("tomatoes") | random_recipes("carrots") | random_recipes("mushrooms") | random_recipes("zucchini") | random_recipes("spinach") | random_recipes("bacon") | random_recipes("cheese") | random_recipes("potatoes") | random_recipes("nuts") | random_recipes("avocado")
+recipes = random_recipes("poultry") | random_recipes("chicken") | random_recipes("seafood") | random_recipes("beef") | random_recipes("pork") | random_recipes("salmon") | random_recipes("shrimp") | random_recipes("eggs") | random_recipes("fish") | random_recipes("onions") | random_recipes("tomatoes") | random_recipes("carrots") | random_recipes("mushrooms") | random_recipes("zucchini") | random_recipes("spinach") | random_recipes("bacon") | random_recipes("cheese") | random_recipes("potatoes") | random_recipes("nuts") | random_recipes("avocado")
 
-recipes = random_recipes("mushrooms")
+# recipes = random_recipes("zucchini")
 
 import time
 
-for index in range(3):
+"""for index in range(3):
     for i in range(10):
-        create_recipe_json(recipes[i])
+        create_recipe_json(recipes[i + (index) * 10])
 
     time.sleep(60)
-exit()
+exit()"""
+
+last_index = 0
+
+while True:
+    for i in range(10):
+        create_recipe_json(recipes[i + last_index])
+        last_index = last_index + 1
+
+    time.sleep(60)
 
 
 if __name__ == '__main__':
