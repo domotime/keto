@@ -111,7 +111,7 @@ def create_recipe_json(recipe: Recipe):
 
 
 # recipes = random_recipes("poultry") | random_recipes("chicken") | random_recipes("seafood") | random_recipes("beef") | random_recipes("pork") | random_recipes("salmon") | random_recipes("shrimp") | random_recipes("eggs") | random_recipes("fish") | random_recipes("onions") | random_recipes("tomatoes") | random_recipes("carrots") | random_recipes("mushrooms") | random_recipes("zucchini") | random_recipes("spinach") | random_recipes("bacon") | random_recipes("cheese") | random_recipes("potatoes") | random_recipes("nuts") | random_recipes("avocado")
-recipes = random_recipes("fish") | random_recipes("onions") | random_recipes("tomatoes") | random_recipes("carrots") | random_recipes("mushrooms") | random_recipes("zucchini") | random_recipes("spinach") | random_recipes("bacon") | random_recipes("cheese") | random_recipes("potatoes") | random_recipes("nuts") | random_recipes("avocado")
+recipes =  random_recipes("onions") | random_recipes("tomatoes") | random_recipes("carrots") | random_recipes("mushrooms") | random_recipes("zucchini") | random_recipes("spinach") | random_recipes("bacon") | random_recipes("cheese") | random_recipes("potatoes") | random_recipes("nuts") | random_recipes("avocado")
 
 # recipes = random_recipes("zucchini")
 
